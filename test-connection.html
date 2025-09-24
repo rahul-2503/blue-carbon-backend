@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Backend Connection Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #0f172a; color: white; }
+        .status { padding: 20px; margin: 10px 0; border-radius: 8px; }
+        .success { background: #059669; }
+        .error { background: #dc2626; }
+        button { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🌍 Backend Connection Test</h1>
+    
+    <button onclick="testConnection()">Test Backend Connection</button>
+    <button onclick="testProjectsAPI()">Test Projects API</button>
+    <button onclick="submitTestProject()">Submit Test Project</button>
+    
+    <div id="result"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+        
+        function testConnection() {
+            showStatus('Testing backend connection...', 'loading');
+            
+            fetch(`${API_BASE}/projects`)
+                .then(response => response.json())
+                .then(data => {
+                    showStatus('✅ Backend connected successfully!', 'success');
+                    console.log('Backend response:', data);
+                })
+                .catch(error => {
+                    showStatus('❌ Backend connection failed: ' + error.message, 'error');
+                });
+        }
+        
+        function testProjectsAPI() {
+            showStatus('Testing projects API...', 'loading');
+            
+            fetch(`${API_BASE}/projects`)
+                .then(response => response.json())
+                .then(data => {
+                    showStatus(`✅ Projects API working! Found ${data.data?.length || 0} projects`, 'success');
+                    console.log('Projects:', data);
+                })
+                .catch(error => {
+                    showStatus('❌ Projects API failed: ' + error.message, 'error');
+                });
+        }
+        
+        function submitTestProject() {
+            showStatus('Submitting test project...', 'loading');
+            
+            const testProject = {
+                projectName: "Test Mangrove Project",
+                organization: "Test NGO",
+                contactEmail: "test@ngo.com",
+                areaHectares: 50,
+                location: {
+                    state: "Tamil Nadu",
+                    district: "Chennai"
+                },
+                mangroveSpecies: ["Rhizophora mucronata"]
+            };
+            
+            fetch(`${API_BASE}/projects/submit`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(testProject)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showStatus(`✅ Project submitted! ID: ${data.projectId}`, 'success');
+                } else {
+                    showStatus('❌ Project submission failed: ' + data.error, 'error');
+                }
+                console.log('Submit response:', data);
+            })
+            .catch(error => {
+                showStatus('❌ Submission failed: ' + error.message, 'error');
+            });
+        }
+        
+        function showStatus(message, type) {
+            const result = document.getElementById('result');
+            result.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+    </script>
+</body>
+</html>
