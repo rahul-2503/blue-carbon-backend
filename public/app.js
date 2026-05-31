@@ -128,6 +128,7 @@ const faqItems = [
 
 const trustBadges = ['UN Climate Lab', 'Blue Carbon Initiative', 'Ocean DAO', 'Global MRV Network'];
 const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+const getLocationLabel = (location) => location?.district || location?.state || 'Unknown';
 
 // Main App Component
 function BlueCarbonApp() {
@@ -184,7 +185,15 @@ function BlueCarbonApp() {
       const response = await fetch(`${API_BASE}/stats`);
       const result = await response.json();
       if (result.success) {
-        setStats(result.data);
+        const data = result.data || {};
+        const totalProjects = data.totalProjects || 0;
+        const verifiedProjects = data.verifiedProjects || 0;
+        setStats({
+          totalProjects,
+          verifiedProjects,
+          pendingProjects: data.pendingProjects ?? Math.max(0, totalProjects - verifiedProjects),
+          estimatedCarbon: data.estimatedCarbon || 0
+        });
       }
     } catch (error) {
       console.error('Error loading stats:', error);
@@ -302,7 +311,7 @@ function BlueCarbonApp() {
       return projects.slice(0, 3).map((project, index) => ({
         id: project.projectId || `BC-${index}`,
         name: project.projectName || 'Blue Carbon Initiative',
-        location: project.location?.district || 'Coastal Region',
+        location: getLocationLabel(project.location),
         credits: project.credits || 0,
         status: project.verified ? 'Verified' : 'Monitoring'
       }));
@@ -850,7 +859,7 @@ function BlueCarbonApp() {
                       <span className="text-teal-400 font-mono">{project.projectId}</span>
                     </td>
                     <td className="py-4 px-4 text-white font-medium">{project.projectName}</td>
-                    <td className="py-4 px-4 text-gray-300">{project.location?.district || 'Unknown'}</td>
+                    <td className="py-4 px-4 text-gray-300">{getLocationLabel(project.location)}</td>
                     <td className="py-4 px-4">
                       <span className="text-emerald-400 font-bold">{(project.credits || 0).toLocaleString()}</span>
                       <span className="text-gray-400 text-sm ml-1">tCO₂e</span>
