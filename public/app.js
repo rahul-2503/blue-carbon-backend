@@ -127,6 +127,7 @@ const faqItems = [
 ];
 
 const trustBadges = ['UN Climate Lab', 'Blue Carbon Initiative', 'Ocean DAO', 'Global MRV Network'];
+const isValidEmail = (value) => /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(value);
 
 // Main App Component
 function BlueCarbonApp() {
@@ -140,7 +141,13 @@ function BlueCarbonApp() {
     pendingProjects: 0,
     estimatedCarbon: 0
   });
-  const [newProject, setNewProject] = useState({ name: '', location: '', credits: '' });
+  const [newProject, setNewProject] = useState({
+    name: '',
+    location: '',
+    credits: '',
+    organization: '',
+    contactEmail: ''
+  });
   const [mrvReport, setMrvReport] = useState({ projectId: '', carbonSequestered: '', verifierName: '' });
   const [loading, setLoading] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -190,8 +197,12 @@ function BlueCarbonApp() {
   };
 
   const addProject = async () => {
-    if (!newProject.name || !newProject.location || !newProject.credits) {
+    if (!newProject.name || !newProject.location || !newProject.credits || !newProject.organization || !newProject.contactEmail) {
       alert('Please fill all fields');
+      return;
+    }
+    if (!isValidEmail(newProject.contactEmail)) {
+      alert('Please enter a valid contact email');
       return;
     }
 
@@ -199,8 +210,8 @@ function BlueCarbonApp() {
     try {
       const projectData = {
         projectName: newProject.name,
-        organization: 'User Organization',
-        contactEmail: 'user@example.com',
+        organization: newProject.organization,
+        contactEmail: newProject.contactEmail,
         areaHectares: parseInt(newProject.credits) / 50,
         location: {
           state: 'Unknown',
@@ -221,7 +232,7 @@ function BlueCarbonApp() {
 
       if (result.success) {
         alert(`✅ Project submitted! ID: ${result.projectId}`);
-        setNewProject({ name: '', location: '', credits: '' });
+        setNewProject({ name: '', location: '', credits: '', organization: '', contactEmail: '' });
         loadProjects();
         loadStats();
       } else {
@@ -322,7 +333,7 @@ function BlueCarbonApp() {
   }, [impactArea]);
 
   const handleSubscribe = () => {
-    if (!newsletterEmail.trim()) {
+    if (!isValidEmail(newsletterEmail.trim())) {
       setNewsletterStatus('Please enter a valid email to receive updates.');
       return;
     }
@@ -369,7 +380,8 @@ function BlueCarbonApp() {
               aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
               aria-expanded={mobileMenuOpen}
             >
-              {mobileMenuOpen ? '✕' : '☰'}
+              <span className="sr-only">{mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}</span>
+              <span aria-hidden="true">{mobileMenuOpen ? '✕' : '☰'}</span>
             </button>
           </div>
         </div>
@@ -644,6 +656,28 @@ function BlueCarbonApp() {
                 placeholder="e.g., Mangrove Restoration Project"
                 value={newProject.name}
                 onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
+                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400"
+              />
+            </div>
+
+            <div>
+              <label className="block text-white font-semibold mb-2">Organization</label>
+              <input
+                type="text"
+                placeholder="e.g., Coastal Restoration Alliance"
+                value={newProject.organization}
+                onChange={(e) => setNewProject({ ...newProject, organization: e.target.value })}
+                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400"
+              />
+            </div>
+
+            <div>
+              <label className="block text-white font-semibold mb-2">Contact Email</label>
+              <input
+                type="email"
+                placeholder="e.g., hello@bluecarbon.org"
+                value={newProject.contactEmail}
+                onChange={(e) => setNewProject({ ...newProject, contactEmail: e.target.value })}
                 className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400"
               />
             </div>
