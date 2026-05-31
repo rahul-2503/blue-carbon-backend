@@ -127,7 +127,7 @@ const faqItems = [
 ];
 
 const trustBadges = ['UN Climate Lab', 'Blue Carbon Initiative', 'Ocean DAO', 'Global MRV Network'];
-const isValidEmail = (value) => /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(value);
+const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
 // Main App Component
 function BlueCarbonApp() {
@@ -198,11 +198,11 @@ function BlueCarbonApp() {
 
   const addProject = async () => {
     if (!newProject.name || !newProject.location || !newProject.credits || !newProject.organization || !newProject.contactEmail) {
-      alert('Please fill all fields');
+      alert('Please fill all required fields: name, organization, contact email, location, and credits.');
       return;
     }
     if (!isValidEmail(newProject.contactEmail)) {
-      alert('Please enter a valid contact email');
+      alert('Please enter a valid project contact email.');
       return;
     }
 
@@ -380,7 +380,6 @@ function BlueCarbonApp() {
               aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
               aria-expanded={mobileMenuOpen}
             >
-              <span className="sr-only">{mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}</span>
               <span aria-hidden="true">{mobileMenuOpen ? '✕' : '☰'}</span>
             </button>
           </div>
