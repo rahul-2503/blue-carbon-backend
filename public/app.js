@@ -366,7 +366,8 @@ function BlueCarbonApp() {
             <button
               className="md:hidden text-white text-xl"
               onClick={() => setMobileMenuOpen((open) => !open)}
-              aria-label="Toggle navigation"
+              aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? '✕' : '☰'}
             </button>
@@ -541,6 +542,7 @@ function BlueCarbonApp() {
                 value={impactArea}
                 onChange={(event) => setImpactArea(Number(event.target.value))}
                 className="range-input"
+                aria-label="Select protected area in hectares"
               />
               <div className="grid grid-cols-2 gap-4 mt-6">
                 <div className="bg-white/5 rounded-xl p-4">
@@ -698,7 +700,7 @@ function BlueCarbonApp() {
               <select
                 value={mrvReport.projectId}
                 onChange={(e) => setMrvReport({ ...mrvReport, projectId: e.target.value })}
-                className="w-full bg-slate-900 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
               >
                 <option value="">Select a project</option>
                 {projects.map((project) => (
