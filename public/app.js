@@ -22,7 +22,7 @@ const quickActions = [
   {
     icon: '🛰️',
     title: 'Verify MRV Data',
-    desc: 'Upload verification data and mint credits instantly.',
+    desc: 'Upload verification data and mint credits efficiently.',
     target: 'submit-mrv'
   },
   {
